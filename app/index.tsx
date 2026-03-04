@@ -1,8 +1,22 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, StatusBar } from 'react-native';
 import { router } from 'expo-router';
+import { useBalance } from '../lib/modules/BalanceContext';
+import { getStats } from '../lib/core/supabase/transactionService';
 
 export default function HomeScreen() {
+  const { balance } = useBalance();
+  const [stats, setStats] = useState({ compras: 0, gastado: 0, exitos: 0, fracasos: 0 });
+
+  useEffect(() => {
+    loadStats();
+  }, []);
+
+  const loadStats = async () => {
+    const data = await getStats();
+    setStats(data);
+  };
+
   return (
     <View style={styles.container}>
       <StatusBar barStyle="light-content" />
@@ -14,7 +28,7 @@ export default function HomeScreen() {
 
       <View style={styles.balanceCard}>
         <Text style={styles.balanceLabel}>Saldo disponible</Text>
-        <Text style={styles.balanceAmount}>$100,000.00</Text>
+        <Text style={styles.balanceAmount}>${balance.toLocaleString()}</Text>
         <Text style={styles.balanceSub}>USD • Cuenta Principal</Text>
       </View>
 
@@ -22,17 +36,22 @@ export default function HomeScreen() {
         <View style={styles.statBox}>
           <Text style={styles.statIcon}>📦</Text>
           <Text style={styles.statLabel}>Compras</Text>
-          <Text style={styles.statValue}>0</Text>
+          <Text style={styles.statValue}>{stats.compras}</Text>
         </View>
         <View style={styles.statBox}>
           <Text style={styles.statIcon}>💸</Text>
           <Text style={styles.statLabel}>Gastado</Text>
-          <Text style={styles.statValue}>$0</Text>
+          <Text style={styles.statValue}>${stats.gastado.toLocaleString()}</Text>
         </View>
         <View style={styles.statBox}>
           <Text style={styles.statIcon}>✅</Text>
           <Text style={styles.statLabel}>Éxitos</Text>
-          <Text style={styles.statValue}>0</Text>
+          <Text style={styles.statValue}>{stats.exitos}</Text>
+        </View>
+        <View style={styles.statBox}>
+          <Text style={styles.statIcon}>❌</Text>
+          <Text style={styles.statLabel}>Fracasos</Text>
+          <Text style={styles.statValue}>{stats.fracasos}</Text>
         </View>
       </View>
 
@@ -68,14 +87,14 @@ const styles = StyleSheet.create({
   balanceLabel: { color: '#ffffffaa', fontSize: 13, marginBottom: 6 },
   balanceAmount: { color: '#fff', fontSize: 38, fontWeight: 'bold' },
   balanceSub: { color: '#ffffffaa', fontSize: 12, marginTop: 6 },
-  statsRow: { flexDirection: 'row', gap: 12, marginBottom: 32 },
+  statsRow: { flexDirection: 'row', gap: 8, marginBottom: 32 },
   statBox: {
     flex: 1, backgroundColor: '#1e1e1e', borderRadius: 14,
-    padding: 16, alignItems: 'center'
+    padding: 12, alignItems: 'center',
   },
-  statIcon: { fontSize: 22, marginBottom: 6 },
-  statLabel: { color: '#888', fontSize: 11, marginBottom: 4 },
-  statValue: { color: '#fff', fontSize: 16, fontWeight: 'bold' },
+  statIcon: { fontSize: 20, marginBottom: 6 },
+  statLabel: { color: '#888', fontSize: 10, marginBottom: 4 },
+  statValue: { color: '#fff', fontSize: 14, fontWeight: 'bold' },
   button: {
     backgroundColor: '#6C63FF', borderRadius: 16,
     padding: 20, flexDirection: 'row',

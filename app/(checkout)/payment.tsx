@@ -12,7 +12,7 @@ export default function PaymentScreen() {
   const { loading, result, balance, processPayment } = useCheckout();
 
   const handlePay = () => {
-    processPayment(productId, Number(amount));
+    processPayment(productId, Number(amount), productName);
   };
 
   const newBalance = balance - Number(amount);

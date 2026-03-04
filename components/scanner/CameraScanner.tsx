@@ -37,7 +37,7 @@ export default function CameraScanner({ onDataDetected }: Props) {
       <CameraView
         style={StyleSheet.absoluteFillObject}
         onBarcodeScanned={scanned ? undefined : handleScan}
-        barcodeScannerSettings={{ barcodeTypes: ['qr', 'ean13', 'code128'] }}
+        barcodeScannerSettings={{ barcodeTypes: ['qr', 'ean13', 'ean8', 'code128', 'code39', 'upc_a', 'upc_e', 'itf14'] }}
       />
       <View style={styles.overlay}>
         <View style={[styles.corner, styles.topLeft]} />
