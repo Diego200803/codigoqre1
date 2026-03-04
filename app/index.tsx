@@ -1,8 +1,22 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, StatusBar } from 'react-native';
 import { router } from 'expo-router';
+import { useBalance } from '../lib/modules/BalanceContext';
+import { getStats } from '../lib/core/supabase/transactionService';
 
 export default function HomeScreen() {
+  const { balance } = useBalance();
+  const [stats, setStats] = useState({ compras: 0, gastado: 0, exitos: 0, fracasos: 0 });
+
+  useEffect(() => {
+    loadStats();
+  }, []);
+
+  const loadStats = async () => {
+    const data = await getStats();
+    setStats(data);
+  };
+
   return (
     <View style={styles.container}>
       <StatusBar barStyle="light-content" />
@@ -14,7 +28,7 @@ export default function HomeScreen() {
 
       <View style={styles.balanceCard}>
         <Text style={styles.balanceLabel}>Saldo disponible</Text>
-        <Text style={styles.balanceAmount}>$100,000.00</Text>
+        <Text style={styles.balanceAmount}>${balance.toLocaleString()}</Text>
         <Text style={styles.balanceSub}>USD • Cuenta Principal</Text>
       </View>
 
@@ -22,29 +36,46 @@ export default function HomeScreen() {
         <View style={styles.statBox}>
           <Text style={styles.statIcon}>📦</Text>
           <Text style={styles.statLabel}>Compras</Text>
-          <Text style={styles.statValue}>0</Text>
+          <Text style={styles.statValue}>{stats.compras}</Text>
         </View>
         <View style={styles.statBox}>
           <Text style={styles.statIcon}>💸</Text>
           <Text style={styles.statLabel}>Gastado</Text>
-          <Text style={styles.statValue}>$0</Text>
+          <Text style={styles.statValue}>${stats.gastado.toLocaleString()}</Text>
         </View>
         <View style={styles.statBox}>
           <Text style={styles.statIcon}>✅</Text>
           <Text style={styles.statLabel}>Éxitos</Text>
-          <Text style={styles.statValue}>0</Text>
+          <Text style={styles.statValue}>{stats.exitos}</Text>
+        </View>
+        <View style={styles.statBox}>
+          <Text style={styles.statIcon}>❌</Text>
+          <Text style={styles.statLabel}>Fracasos</Text>
+          <Text style={styles.statValue}>{stats.fracasos}</Text>
         </View>
       </View>
 
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => router.push('/(checkout)/scanner')}
-      >
-        <Text style={styles.buttonIcon}>📷</Text>
-        <Text style={styles.buttonText}>Escanear y Pagar</Text>
-      </TouchableOpacity>
+      <Text style={styles.sectionTitle}>¿Qué querés escanear?</Text>
 
-      <Text style={styles.hint}>Apuntá la cámara a cualquier código QR o de barras</Text>
+      <View style={styles.scanRow}>
+        <TouchableOpacity
+          style={styles.scanCard}
+          onPress={() => router.push({ pathname: '/(checkout)/scanner', params: { mode: 'qr' } })}
+        >
+          <Text style={styles.scanCardIcon}>📷</Text>
+          <Text style={styles.scanCardTitle}>Código QR</Text>
+          <Text style={styles.scanCardSub}>Pagos y links</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[styles.scanCard, styles.scanCardAlt]}
+          onPress={() => router.push({ pathname: '/(checkout)/scanner', params: { mode: 'barcode' } })}
+        >
+          <Text style={styles.scanCardIcon}>📦</Text>
+          <Text style={styles.scanCardTitle}>Código de Barras</Text>
+          <Text style={styles.scanCardSub}>Productos retail</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
@@ -68,20 +99,32 @@ const styles = StyleSheet.create({
   balanceLabel: { color: '#ffffffaa', fontSize: 13, marginBottom: 6 },
   balanceAmount: { color: '#fff', fontSize: 38, fontWeight: 'bold' },
   balanceSub: { color: '#ffffffaa', fontSize: 12, marginTop: 6 },
-  statsRow: { flexDirection: 'row', gap: 12, marginBottom: 32 },
+  statsRow: { flexDirection: 'row', gap: 8, marginBottom: 32 },
   statBox: {
     flex: 1, backgroundColor: '#1e1e1e', borderRadius: 14,
-    padding: 16, alignItems: 'center'
+    padding: 12, alignItems: 'center',
   },
-  statIcon: { fontSize: 22, marginBottom: 6 },
-  statLabel: { color: '#888', fontSize: 11, marginBottom: 4 },
-  statValue: { color: '#fff', fontSize: 16, fontWeight: 'bold' },
-  button: {
-    backgroundColor: '#6C63FF', borderRadius: 16,
-    padding: 20, flexDirection: 'row',
-    alignItems: 'center', justifyContent: 'center', gap: 12,
+  statIcon: { fontSize: 20, marginBottom: 6 },
+  statLabel: { color: '#888', fontSize: 10, marginBottom: 4 },
+  statValue: { color: '#fff', fontSize: 14, fontWeight: 'bold' },
+  sectionTitle: { color: '#fff', fontSize: 18, fontWeight: 'bold', marginBottom: 16 },
+  scanRow: { flexDirection: 'row', gap: 12 },
+  scanCard: {
+    flex: 1, backgroundColor: '#6C63FF', borderRadius: 20,
+    padding: 24, alignItems: 'center', justifyContent: 'center',
+    shadowColor: '#6C63FF',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.35,
+    shadowRadius: 12,
+    elevation: 8,
   },
-  buttonIcon: { fontSize: 22 },
-  buttonText: { color: '#fff', fontSize: 18, fontWeight: 'bold' },
-  hint: { color: '#555', fontSize: 13, textAlign: 'center', marginTop: 16 },
+  scanCardAlt: {
+    backgroundColor: '#1e1e1e',
+    borderWidth: 1,
+    borderColor: '#6C63FF',
+    shadowColor: '#000',
+  },
+  scanCardIcon: { fontSize: 36, marginBottom: 10 },
+  scanCardTitle: { color: '#fff', fontSize: 15, fontWeight: 'bold', textAlign: 'center' },
+  scanCardSub: { color: '#ffffffaa', fontSize: 11, marginTop: 4, textAlign: 'center' },
 });
