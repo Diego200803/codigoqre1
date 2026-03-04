@@ -3,13 +3,16 @@ import { View, Text, StyleSheet, TouchableOpacity, StatusBar } from 'react-nativ
 import { router } from 'expo-router';
 import { useBalance } from '../lib/modules/BalanceContext';
 import { getStats } from '../lib/core/supabase/transactionService';
+import { supabase } from '../lib/core/supabase/client';
 
 export default function HomeScreen() {
   const { balance } = useBalance();
   const [stats, setStats] = useState({ compras: 0, gastado: 0, exitos: 0, fracasos: 0 });
+  const [userEmail, setUserEmail] = useState('');
 
   useEffect(() => {
     loadStats();
+    loadUser();
   }, []);
 
   const loadStats = async () => {
@@ -17,13 +20,29 @@ export default function HomeScreen() {
     setStats(data);
   };
 
+  const loadUser = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user?.email) setUserEmail(user.email);
+  };
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+  };
+
   return (
     <View style={styles.container}>
       <StatusBar barStyle="light-content" />
 
       <View style={styles.header}>
-        <Text style={styles.greeting}>Bienvenido 👋</Text>
-        <Text style={styles.name}>Juan Dev</Text>
+        <View style={styles.headerRow}>
+          <View>
+            <Text style={styles.greeting}>Bienvenido 👋</Text>
+            <Text style={styles.name}>{userEmail || 'Usuario'}</Text>
+          </View>
+          <TouchableOpacity style={styles.logoutBtn} onPress={handleLogout}>
+            <Text style={styles.logoutText}>Salir</Text>
+          </TouchableOpacity>
+        </View>
       </View>
 
       <View style={styles.balanceCard}>
@@ -83,8 +102,11 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#0f0f0f', padding: 24, paddingTop: 60 },
   header: { marginBottom: 28 },
+  headerRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   greeting: { color: '#888', fontSize: 15 },
-  name: { color: '#fff', fontSize: 26, fontWeight: 'bold' },
+  name: { color: '#fff', fontSize: 20, fontWeight: 'bold' },
+  logoutBtn: { backgroundColor: '#1e1e1e', paddingHorizontal: 14, paddingVertical: 8, borderRadius: 10 },
+  logoutText: { color: '#6C63FF', fontWeight: 'bold', fontSize: 13 },
   balanceCard: {
     backgroundColor: '#6C63FF',
     borderRadius: 20,
