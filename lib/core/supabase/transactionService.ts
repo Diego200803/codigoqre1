@@ -1,27 +1,25 @@
 import { supabase } from './client';
 
 export type Transaction = {
-  user_id?:       string;     // ✅ agregado, opcional para cuando no hay sesión
-  product_id:     string;
-  product_name:   string;
-  amount:         number;
-  success:        boolean;
+  user_id?:        string;
+  product_id:      string;
+  product_name:    string;
+  amount:          number;
+  success:         boolean;
   transaction_id?: string;
 };
 
 export async function saveTransaction(transaction: Transaction): Promise<void> {
-  const { error } = await supabase
-    .from('transactions')
-    .insert({
-      user_id:          transaction.user_id       ?? null,
-      product_id:       transaction.product_id,
-      product_name:     transaction.product_name,
-      amount:           transaction.amount,
-      transaction_code: transaction.transaction_id ?? null,
-      status:           transaction.success ? 'approved' : 'rejected',
-      error_message:    !transaction.success ? 'Pago rechazado por el sistema' : null,
-      payment_method:   'qr',
-    });
+  const { error } = await supabase.from('transactions').insert({
+    user_id:          transaction.user_id       ?? null,
+    product_id:       transaction.product_id,
+    product_name:     transaction.product_name,
+    amount:           transaction.amount,
+    transaction_code: transaction.transaction_id ?? null,
+    status:           transaction.success ? 'approved' : 'rejected',
+    error_message:    !transaction.success ? 'Pago rechazado por el sistema' : null,
+    payment_method:   'qr',
+  });
 
   if (error) {
     console.error('❌ Error guardando transacción:', error.message);
@@ -45,4 +43,16 @@ export async function getStats() {
     exitos:   exitos.length,
     fracasos: fracasos.length,
   };
+}
+
+// ✅ NUEVO: últimas 10 transacciones para el historial
+export async function getRecentTransactions() {
+  const { data, error } = await supabase
+    .from('transactions')
+    .select('*')
+    .order('created_at', { ascending: false })
+    .limit(10);
+
+  if (error || !data) return [];
+  return data;
 }
