@@ -29,6 +29,7 @@ export default function HomeScreen() {
     await supabase.auth.signOut();
   };
 
+  // Pantalla principal de QR Checkout
   return (
     <View style={styles.container}>
       <StatusBar barStyle="light-content" />
@@ -40,7 +41,7 @@ export default function HomeScreen() {
             <Text style={styles.name}>{userEmail || 'Usuario'}</Text>
           </View>
           <TouchableOpacity style={styles.logoutBtn} onPress={handleLogout}>
-            <Text style={styles.logoutText}>Salir</Text>
+            <Text style={styles.logoutText}>Salir 👋</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -94,6 +95,10 @@ export default function HomeScreen() {
           <Text style={styles.scanCardTitle}>Código de Barras</Text>
           <Text style={styles.scanCardSub}>Productos retail</Text>
         </TouchableOpacity>
+      </View>
+
+      <View style={styles.footer}>
+        <Text style={styles.footerText}>🔒 Tus pagos están protegidos</Text>
       </View>
     </View>
   );
@@ -149,4 +154,6 @@ const styles = StyleSheet.create({
   scanCardIcon: { fontSize: 36, marginBottom: 10 },
   scanCardTitle: { color: '#fff', fontSize: 15, fontWeight: 'bold', textAlign: 'center' },
   scanCardSub: { color: '#ffffffaa', fontSize: 11, marginTop: 4, textAlign: 'center' },
+  footer: { alignItems: 'center', marginTop: 24 },
+  footerText: { color: '#333', fontSize: 12 },
 });
