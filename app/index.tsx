@@ -3,13 +3,16 @@ import { View, Text, StyleSheet, TouchableOpacity, StatusBar } from 'react-nativ
 import { router } from 'expo-router';
 import { useBalance } from '../lib/modules/BalanceContext';
 import { getStats } from '../lib/core/supabase/transactionService';
+import { supabase } from '../lib/core/supabase/client';
 
 export default function HomeScreen() {
   const { balance } = useBalance();
   const [stats, setStats] = useState({ compras: 0, gastado: 0, exitos: 0, fracasos: 0 });
+  const [userEmail, setUserEmail] = useState('');
 
   useEffect(() => {
     loadStats();
+    loadUser();
   }, []);
 
   const loadStats = async () => {
@@ -17,14 +20,30 @@ export default function HomeScreen() {
     setStats(data);
   };
 
+  const loadUser = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user?.email) setUserEmail(user.email);
+  };
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+  };
+
   return (
     <View style={styles.container}>
       <StatusBar barStyle="light-content" />
 
-      {/* Header */}
+      {/* Header con logout */}
       <View style={styles.header}>
-        <Text style={styles.greeting}>Bienvenido 👋</Text>
-        <Text style={styles.name}>Juan Dev</Text>
+        <View style={styles.headerRow}>
+          <View>
+            <Text style={styles.greeting}>Bienvenido 👋</Text>
+            <Text style={styles.name}>{userEmail || 'Usuario'}</Text>
+          </View>
+          <TouchableOpacity style={styles.logoutBtn} onPress={handleLogout}>
+            <Text style={styles.logoutText}>Salir 👋</Text>
+          </TouchableOpacity>
+        </View>
       </View>
 
       {/* Balance */}
@@ -34,7 +53,7 @@ export default function HomeScreen() {
         <Text style={styles.balanceSub}>USD • Cuenta Principal</Text>
       </View>
 
-      {/* ✅ Stats tocables → navegan a /stats */}
+      {/* Stats tocables → /stats */}
       <TouchableOpacity
         style={styles.statsRow}
         onPress={() => router.push('/stats')}
@@ -63,16 +82,31 @@ export default function HomeScreen() {
       </TouchableOpacity>
       <Text style={styles.statsHint}>Toca para ver detalles →</Text>
 
-      {/* Botón escanear */}
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => router.push('/(checkout)/scanner')}
-      >
-        <Text style={styles.buttonIcon}>📷</Text>
-        <Text style={styles.buttonText}>Escanear y Pagar</Text>
-      </TouchableOpacity>
+      {/* Botones de escaneo */}
+      <Text style={styles.sectionTitle}>¿Qué querés escanear?</Text>
+      <View style={styles.scanRow}>
+        <TouchableOpacity
+          style={styles.scanCard}
+          onPress={() => router.push({ pathname: '/(checkout)/scanner', params: { mode: 'qr' } })}
+        >
+          <Text style={styles.scanCardIcon}>📷</Text>
+          <Text style={styles.scanCardTitle}>Código QR</Text>
+          <Text style={styles.scanCardSub}>Pagos y links</Text>
+        </TouchableOpacity>
 
-      <Text style={styles.hint}>Apuntá la cámara a cualquier código QR o de barras</Text>
+        <TouchableOpacity
+          style={[styles.scanCard, styles.scanCardAlt]}
+          onPress={() => router.push({ pathname: '/(checkout)/scanner', params: { mode: 'barcode' } })}
+        >
+          <Text style={styles.scanCardIcon}>📦</Text>
+          <Text style={styles.scanCardTitle}>Código de Barras</Text>
+          <Text style={styles.scanCardSub}>Productos retail</Text>
+        </TouchableOpacity>
+      </View>
+
+      <View style={styles.footer}>
+        <Text style={styles.footerText}>🔒 Tus pagos están protegidos</Text>
+      </View>
     </View>
   );
 }
@@ -80,33 +114,40 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container:     { flex: 1, backgroundColor: '#0f0f0f', padding: 24, paddingTop: 60 },
   header:        { marginBottom: 28 },
+  headerRow:     { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   greeting:      { color: '#888', fontSize: 15 },
-  name:          { color: '#fff', fontSize: 26, fontWeight: 'bold' },
+  name:          { color: '#fff', fontSize: 20, fontWeight: 'bold' },
+  logoutBtn:     { backgroundColor: '#1e1e1e', paddingHorizontal: 14, paddingVertical: 8, borderRadius: 10 },
+  logoutText:    { color: '#6C63FF', fontWeight: 'bold', fontSize: 13 },
   balanceCard: {
-    backgroundColor: '#6C63FF',
-    borderRadius: 20, padding: 24, marginBottom: 24,
-    shadowColor: '#6C63FF',
-    shadowOffset: { width: 0, height: 8 },
+    backgroundColor: '#6C63FF', borderRadius: 20, padding: 24, marginBottom: 24,
+    shadowColor: '#6C63FF', shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.4, shadowRadius: 16, elevation: 10,
   },
   balanceLabel:  { color: '#ffffffaa', fontSize: 13, marginBottom: 6 },
   balanceAmount: { color: '#fff', fontSize: 38, fontWeight: 'bold' },
   balanceSub:    { color: '#ffffffaa', fontSize: 12, marginTop: 6 },
   statsRow:      { flexDirection: 'row', gap: 8, marginBottom: 4 },
-  statsHint:     { color: '#555', fontSize: 11, textAlign: 'right', marginBottom: 28 },
+  statsHint:     { color: '#555', fontSize: 11, textAlign: 'right', marginBottom: 20 },
   statBox: {
     flex: 1, backgroundColor: '#1e1e1e',
     borderRadius: 14, padding: 12, alignItems: 'center',
   },
-  statIcon:  { fontSize: 20, marginBottom: 6 },
-  statLabel: { color: '#888', fontSize: 10, marginBottom: 4 },
-  statValue: { color: '#fff', fontSize: 14, fontWeight: 'bold' },
-  button: {
-    backgroundColor: '#6C63FF', borderRadius: 16,
-    padding: 20, flexDirection: 'row',
-    alignItems: 'center', justifyContent: 'center', gap: 12,
+  statIcon:      { fontSize: 20, marginBottom: 6 },
+  statLabel:     { color: '#888', fontSize: 10, marginBottom: 4 },
+  statValue:     { color: '#fff', fontSize: 14, fontWeight: 'bold' },
+  sectionTitle:  { color: '#fff', fontSize: 18, fontWeight: 'bold', marginBottom: 16 },
+  scanRow:       { flexDirection: 'row', gap: 12 },
+  scanCard: {
+    flex: 1, backgroundColor: '#6C63FF', borderRadius: 20,
+    padding: 24, alignItems: 'center', justifyContent: 'center',
+    shadowColor: '#6C63FF', shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.35, shadowRadius: 12, elevation: 8,
   },
-  buttonIcon: { fontSize: 22 },
-  buttonText: { color: '#fff', fontSize: 18, fontWeight: 'bold' },
-  hint:       { color: '#555', fontSize: 13, textAlign: 'center', marginTop: 16 },
+  scanCardAlt:   { backgroundColor: '#1e1e1e', borderWidth: 1, borderColor: '#6C63FF', shadowColor: '#000' },
+  scanCardIcon:  { fontSize: 36, marginBottom: 10 },
+  scanCardTitle: { color: '#fff', fontSize: 15, fontWeight: 'bold', textAlign: 'center' },
+  scanCardSub:   { color: '#ffffffaa', fontSize: 11, marginTop: 4, textAlign: 'center' },
+  footer:        { alignItems: 'center', marginTop: 24 },
+  footerText:    { color: '#333', fontSize: 12 },
 });
