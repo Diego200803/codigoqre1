@@ -2,15 +2,18 @@ import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { router } from 'expo-router';
 import CameraScanner from '../../components/scanner/CameraScanner';
-import { isValidQR, extractProductId } from '../../lib/core/qr/qrUtils';
+import { getProductInfo } from '../../lib/core/payments/paymentService';
 
 export default function ScannerScreen() {
   const handleData = (data: string) => {
-    if (!isValidQR(data)) return;
-    const productId = extractProductId(data);
+    const product = getProductInfo(data);
     router.push({
       pathname: '/(checkout)/payment',
-      params: { productId, amount: '1500' },
+      params: {
+        productId: data,
+        productName: product.name,
+        amount: String(product.price),
+      },
     });
   };
 

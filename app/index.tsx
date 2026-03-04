@@ -1,26 +1,87 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, StatusBar } from 'react-native';
 import { router } from 'expo-router';
 
 export default function HomeScreen() {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>QR Checkout</Text>
-      <Text style={styles.subtitle}>Escaneá un código para pagar</Text>
+      <StatusBar barStyle="light-content" />
+
+      <View style={styles.header}>
+        <Text style={styles.greeting}>Bienvenido 👋</Text>
+        <Text style={styles.name}>Juan Dev</Text>
+      </View>
+
+      <View style={styles.balanceCard}>
+        <Text style={styles.balanceLabel}>Saldo disponible</Text>
+        <Text style={styles.balanceAmount}>$100,000.00</Text>
+        <Text style={styles.balanceSub}>USD • Cuenta Principal</Text>
+      </View>
+
+      <View style={styles.statsRow}>
+        <View style={styles.statBox}>
+          <Text style={styles.statIcon}>📦</Text>
+          <Text style={styles.statLabel}>Compras</Text>
+          <Text style={styles.statValue}>0</Text>
+        </View>
+        <View style={styles.statBox}>
+          <Text style={styles.statIcon}>💸</Text>
+          <Text style={styles.statLabel}>Gastado</Text>
+          <Text style={styles.statValue}>$0</Text>
+        </View>
+        <View style={styles.statBox}>
+          <Text style={styles.statIcon}>✅</Text>
+          <Text style={styles.statLabel}>Éxitos</Text>
+          <Text style={styles.statValue}>0</Text>
+        </View>
+      </View>
+
       <TouchableOpacity
         style={styles.button}
         onPress={() => router.push('/(checkout)/scanner')}
       >
-        <Text style={styles.buttonText}>📷 Abrir Scanner</Text>
+        <Text style={styles.buttonIcon}>📷</Text>
+        <Text style={styles.buttonText}>Escanear y Pagar</Text>
       </TouchableOpacity>
+
+      <Text style={styles.hint}>Apuntá la cámara a cualquier código QR o de barras</Text>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0f0f0f', justifyContent: 'center', alignItems: 'center', padding: 24 },
-  title: { color: '#fff', fontSize: 32, fontWeight: 'bold', marginBottom: 8 },
-  subtitle: { color: '#888', fontSize: 16, marginBottom: 40 },
-  button: { backgroundColor: '#6C63FF', paddingHorizontal: 40, paddingVertical: 16, borderRadius: 14 },
+  container: { flex: 1, backgroundColor: '#0f0f0f', padding: 24, paddingTop: 60 },
+  header: { marginBottom: 28 },
+  greeting: { color: '#888', fontSize: 15 },
+  name: { color: '#fff', fontSize: 26, fontWeight: 'bold' },
+  balanceCard: {
+    backgroundColor: '#6C63FF',
+    borderRadius: 20,
+    padding: 24,
+    marginBottom: 24,
+    shadowColor: '#6C63FF',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.4,
+    shadowRadius: 16,
+    elevation: 10,
+  },
+  balanceLabel: { color: '#ffffffaa', fontSize: 13, marginBottom: 6 },
+  balanceAmount: { color: '#fff', fontSize: 38, fontWeight: 'bold' },
+  balanceSub: { color: '#ffffffaa', fontSize: 12, marginTop: 6 },
+  statsRow: { flexDirection: 'row', gap: 12, marginBottom: 32 },
+  statBox: {
+    flex: 1, backgroundColor: '#1e1e1e', borderRadius: 14,
+    padding: 16, alignItems: 'center'
+  },
+  statIcon: { fontSize: 22, marginBottom: 6 },
+  statLabel: { color: '#888', fontSize: 11, marginBottom: 4 },
+  statValue: { color: '#fff', fontSize: 16, fontWeight: 'bold' },
+  button: {
+    backgroundColor: '#6C63FF', borderRadius: 16,
+    padding: 20, flexDirection: 'row',
+    alignItems: 'center', justifyContent: 'center', gap: 12,
+  },
+  buttonIcon: { fontSize: 22 },
   buttonText: { color: '#fff', fontSize: 18, fontWeight: 'bold' },
+  hint: { color: '#555', fontSize: 13, textAlign: 'center', marginTop: 16 },
 });
