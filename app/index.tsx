@@ -21,18 +21,25 @@ export default function HomeScreen() {
     <View style={styles.container}>
       <StatusBar barStyle="light-content" />
 
+      {/* Header */}
       <View style={styles.header}>
         <Text style={styles.greeting}>Bienvenido 👋</Text>
         <Text style={styles.name}>Juan Dev</Text>
       </View>
 
+      {/* Balance */}
       <View style={styles.balanceCard}>
         <Text style={styles.balanceLabel}>Saldo disponible</Text>
         <Text style={styles.balanceAmount}>${balance.toLocaleString()}</Text>
         <Text style={styles.balanceSub}>USD • Cuenta Principal</Text>
       </View>
 
-      <View style={styles.statsRow}>
+      {/* ✅ Stats tocables → navegan a /stats */}
+      <TouchableOpacity
+        style={styles.statsRow}
+        onPress={() => router.push('/stats')}
+        activeOpacity={0.8}
+      >
         <View style={styles.statBox}>
           <Text style={styles.statIcon}>📦</Text>
           <Text style={styles.statLabel}>Compras</Text>
@@ -53,8 +60,10 @@ export default function HomeScreen() {
           <Text style={styles.statLabel}>Fracasos</Text>
           <Text style={styles.statValue}>{stats.fracasos}</Text>
         </View>
-      </View>
+      </TouchableOpacity>
+      <Text style={styles.statsHint}>Toca para ver detalles →</Text>
 
+      {/* Botón escanear */}
       <TouchableOpacity
         style={styles.button}
         onPress={() => router.push('/(checkout)/scanner')}
@@ -69,30 +78,27 @@ export default function HomeScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0f0f0f', padding: 24, paddingTop: 60 },
-  header: { marginBottom: 28 },
-  greeting: { color: '#888', fontSize: 15 },
-  name: { color: '#fff', fontSize: 26, fontWeight: 'bold' },
+  container:     { flex: 1, backgroundColor: '#0f0f0f', padding: 24, paddingTop: 60 },
+  header:        { marginBottom: 28 },
+  greeting:      { color: '#888', fontSize: 15 },
+  name:          { color: '#fff', fontSize: 26, fontWeight: 'bold' },
   balanceCard: {
     backgroundColor: '#6C63FF',
-    borderRadius: 20,
-    padding: 24,
-    marginBottom: 24,
+    borderRadius: 20, padding: 24, marginBottom: 24,
     shadowColor: '#6C63FF',
     shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.4,
-    shadowRadius: 16,
-    elevation: 10,
+    shadowOpacity: 0.4, shadowRadius: 16, elevation: 10,
   },
-  balanceLabel: { color: '#ffffffaa', fontSize: 13, marginBottom: 6 },
+  balanceLabel:  { color: '#ffffffaa', fontSize: 13, marginBottom: 6 },
   balanceAmount: { color: '#fff', fontSize: 38, fontWeight: 'bold' },
-  balanceSub: { color: '#ffffffaa', fontSize: 12, marginTop: 6 },
-  statsRow: { flexDirection: 'row', gap: 8, marginBottom: 32 },
+  balanceSub:    { color: '#ffffffaa', fontSize: 12, marginTop: 6 },
+  statsRow:      { flexDirection: 'row', gap: 8, marginBottom: 4 },
+  statsHint:     { color: '#555', fontSize: 11, textAlign: 'right', marginBottom: 28 },
   statBox: {
-    flex: 1, backgroundColor: '#1e1e1e', borderRadius: 14,
-    padding: 12, alignItems: 'center',
+    flex: 1, backgroundColor: '#1e1e1e',
+    borderRadius: 14, padding: 12, alignItems: 'center',
   },
-  statIcon: { fontSize: 20, marginBottom: 6 },
+  statIcon:  { fontSize: 20, marginBottom: 6 },
   statLabel: { color: '#888', fontSize: 10, marginBottom: 4 },
   statValue: { color: '#fff', fontSize: 14, fontWeight: 'bold' },
   button: {
@@ -102,5 +108,5 @@ const styles = StyleSheet.create({
   },
   buttonIcon: { fontSize: 22 },
   buttonText: { color: '#fff', fontSize: 18, fontWeight: 'bold' },
-  hint: { color: '#555', fontSize: 13, textAlign: 'center', marginTop: 16 },
+  hint:       { color: '#555', fontSize: 13, textAlign: 'center', marginTop: 16 },
 });
