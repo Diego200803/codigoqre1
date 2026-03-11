@@ -1,12 +1,44 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View, Text, TextInput, TouchableOpacity,
-  StyleSheet, ActivityIndicator, StatusBar, Alert
+  StyleSheet, ActivityIndicator, StatusBar, Alert, Platform
 } from 'react-native';
 import { router } from 'expo-router';
 import { supabase } from '../../lib/core/supabase/client';
-
+import * as Notifications from 'expo-notifications';
 import { Rocket } from "lucide-react-native";
+
+async function requestNotificationPermissions(): Promise<boolean> {
+  if (Platform.OS === 'android') {
+    await Notifications.setNotificationChannelAsync('default', {
+      name: 'default',
+      importance: Notifications.AndroidImportance.MAX,
+      vibrationPattern: [0, 250, 250, 250],
+      lightColor: '#6C63FF',
+    });
+  }
+
+  const { status: existingStatus } = await Notifications.getPermissionsAsync();
+  if (existingStatus === 'granted') return true;
+
+  const { status } = await Notifications.requestPermissionsAsync();
+  return status === 'granted';
+}
+
+async function sendRegisterNotification(email: string) {
+  const granted = await requestNotificationPermissions();
+  if (!granted) return;
+
+  await Notifications.scheduleNotificationAsync({
+    content: {
+      title: 'Cuenta creada',
+      body: `Tu cuenta ${email} fue registrada exitosamente`,
+      sound: true,
+      data: { screen: 'login' },
+    },
+    trigger: null,
+  });
+}
 
 export default function RegisterScreen() {
 
@@ -15,8 +47,11 @@ export default function RegisterScreen() {
   const [confirm, setConfirm] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const handleRegister = async () => {
+  useEffect(() => {
+    requestNotificationPermissions();
+  }, []);
 
+  const handleRegister = async () => {
     if (!email || !password || !confirm) {
       Alert.alert('Error', 'Completá todos los campos');
       return;
@@ -41,40 +76,26 @@ export default function RegisterScreen() {
     if (error) {
       Alert.alert('Error', error.message);
     } else {
-      Alert.alert('¡Listo!', 'Cuenta creada exitosamente', [
+      await sendRegisterNotification(email);
+      Alert.alert('Listo', 'Cuenta creada exitosamente', [
         { text: 'Iniciar Sesión', onPress: () => router.replace('/(auth)/login') }
       ]);
     }
-
   };
 
   return (
-
     <View style={styles.container}>
-
       <StatusBar barStyle="light-content" />
 
       <View style={styles.header}>
-
-        <Rocket size={56} color="#6C63FF" style={styles.icon}/>
-
-        <Text style={styles.title}>
-          Crear Cuenta
-        </Text>
-
-        <Text style={styles.subtitle}>
-          Registrate para empezar
-        </Text>
-
+        <Rocket size={56} color="#6C63FF" style={styles.icon} />
+        <Text style={styles.title}>Crear Cuenta</Text>
+        <Text style={styles.subtitle}>Registrate para empezar</Text>
       </View>
-
 
       <View style={styles.form}>
 
-        <Text style={styles.label}>
-          Email
-        </Text>
-
+        <Text style={styles.label}>Email</Text>
         <TextInput
           style={styles.input}
           placeholder="tu@email.com"
@@ -85,11 +106,7 @@ export default function RegisterScreen() {
           autoCapitalize="none"
         />
 
-
-        <Text style={styles.label}>
-          Contraseña
-        </Text>
-
+        <Text style={styles.label}>Contraseña</Text>
         <TextInput
           style={styles.input}
           placeholder="••••••••"
@@ -99,11 +116,7 @@ export default function RegisterScreen() {
           secureTextEntry
         />
 
-
-        <Text style={styles.label}>
-          Confirmar Contraseña
-        </Text>
-
+        <Text style={styles.label}>Confirmar Contraseña</Text>
         <TextInput
           style={styles.input}
           placeholder="••••••••"
@@ -113,122 +126,44 @@ export default function RegisterScreen() {
           secureTextEntry
         />
 
-
         <TouchableOpacity
           style={[styles.button, loading && styles.buttonDisabled]}
           onPress={handleRegister}
           disabled={loading}
         >
-
           {loading
             ? <ActivityIndicator color="#fff" />
             : <Text style={styles.buttonText}>Crear Cuenta</Text>
           }
-
         </TouchableOpacity>
-
 
         <TouchableOpacity
           style={styles.link}
           onPress={() => router.back()}
         >
-
           <Text style={styles.linkText}>
             ¿Ya tenés cuenta? <Text style={styles.linkBold}>Iniciá sesión</Text>
           </Text>
-
         </TouchableOpacity>
 
       </View>
-
     </View>
-
   );
-
 }
 
 const styles = StyleSheet.create({
-
-  container:{
-    flex:1,
-    backgroundColor:'#0f0f0f',
-    padding:24,
-    justifyContent:'center'
-  },
-
-  header:{
-    alignItems:'center',
-    marginBottom:40
-  },
-
-  icon:{
-    marginBottom:12
-  },
-
-  title:{
-    color:'#fff',
-    fontSize:30,
-    fontWeight:'bold'
-  },
-
-  subtitle:{
-    color:'#888',
-    fontSize:15,
-    marginTop:6
-  },
-
-  form:{
-    gap:12
-  },
-
-  label:{
-    color:'#aaa',
-    fontSize:13,
-    marginBottom:4
-  },
-
-  input:{
-    backgroundColor:'#1e1e1e',
-    color:'#fff',
-    borderRadius:12,
-    padding:16,
-    fontSize:15,
-    borderWidth:1,
-    borderColor:'#2e2e2e',
-    marginBottom:8
-  },
-
-  button:{
-    backgroundColor:'#6C63FF',
-    borderRadius:14,
-    padding:18,
-    alignItems:'center',
-    marginTop:8
-  },
-
-  buttonDisabled:{
-    opacity:0.6
-  },
-
-  buttonText:{
-    color:'#fff',
-    fontSize:17,
-    fontWeight:'bold'
-  },
-
-  link:{
-    alignItems:'center',
-    marginTop:16
-  },
-
-  linkText:{
-    color:'#888',
-    fontSize:14
-  },
-
-  linkBold:{
-    color:'#6C63FF',
-    fontWeight:'bold'
-  }
-
+  container: { flex:1, backgroundColor:'#0f0f0f', padding:24, justifyContent:'center' },
+  header: { alignItems:'center', marginBottom:40 },
+  icon: { marginBottom:12 },
+  title: { color:'#fff', fontSize:30, fontWeight:'bold' },
+  subtitle: { color:'#888', fontSize:15, marginTop:6 },
+  form: { gap:12 },
+  label: { color:'#aaa', fontSize:13, marginBottom:4 },
+  input: { backgroundColor:'#1e1e1e', color:'#fff', borderRadius:12, padding:16, fontSize:15, borderWidth:1, borderColor:'#2e2e2e', marginBottom:8 },
+  button: { backgroundColor:'#6C63FF', borderRadius:14, padding:18, alignItems:'center', marginTop:8 },
+  buttonDisabled: { opacity:0.6 },
+  buttonText: { color:'#fff', fontSize:17, fontWeight:'bold' },
+  link: { alignItems:'center', marginTop:16 },
+  linkText: { color:'#888', fontSize:14 },
+  linkBold: { color:'#6C63FF', fontWeight:'bold' },
 });
