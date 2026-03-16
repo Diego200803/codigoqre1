@@ -1,13 +1,18 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { CameraView, useCameraPermissions } from 'expo-camera';
+import { CameraView, useCameraPermissions, BarcodeType } from 'expo-camera';
 import * as Haptics from 'expo-haptics';
+import { notify } from '../../lib/core/notifications/notificationService';
 
 type Props = {
   onDataDetected: (data: string) => void;
+  mode?: 'qr' | 'barcode';
 };
 
-export default function CameraScanner({ onDataDetected }: Props) {
+const QR_TYPES: BarcodeType[] = ['qr'];
+const BARCODE_TYPES: BarcodeType[] = ['ean13', 'ean8', 'code128', 'code39', 'upc_a', 'upc_e', 'itf14'];
+
+export default function CameraScanner({ onDataDetected, mode = 'qr' }: Props) {
   const [permission, requestPermission] = useCameraPermissions();
   const [scanned, setScanned] = useState(false);
 
@@ -28,16 +33,19 @@ export default function CameraScanner({ onDataDetected }: Props) {
     if (scanned) return;
     setScanned(true);
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    notify.qrScanned();
     onDataDetected(data);
     setTimeout(() => setScanned(false), 3000);
   };
+
+  const barcodeTypes = mode === 'qr' ? QR_TYPES : BARCODE_TYPES;
 
   return (
     <View style={styles.container}>
       <CameraView
         style={StyleSheet.absoluteFillObject}
         onBarcodeScanned={scanned ? undefined : handleScan}
-        barcodeScannerSettings={{ barcodeTypes: ['qr', 'ean13', 'ean8', 'code128', 'code39', 'upc_a', 'upc_e', 'itf14'] }}
+        barcodeScannerSettings={{ barcodeTypes }}
       />
       <View style={styles.overlay}>
         <View style={[styles.corner, styles.topLeft]} />
