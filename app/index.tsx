@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, StatusBar } from 'react-native';
 import { router } from 'expo-router';
+import { LogOut, Package, DollarSign, CheckCircle, XCircle, QrCode, Barcode, MapPin, Lock, Wallet } from 'lucide-react-native';
 import { useBalance } from '../lib/modules/BalanceContext';
 import { getStats } from '../lib/core/supabase/transactionService';
 import { supabase } from '../lib/core/supabase/client';
@@ -36,43 +37,41 @@ export default function HomeScreen() {
       <View style={styles.header}>
         <View style={styles.headerRow}>
           <View>
-            <Text style={styles.greeting}>Bienvenido 👋</Text>
+            <Text style={styles.greeting}>Bienvenido</Text>
             <Text style={styles.name}>{userEmail || 'Usuario'}</Text>
           </View>
           <TouchableOpacity style={styles.logoutBtn} onPress={handleLogout}>
-            <Text style={styles.logoutText}>Salir 👋</Text>
+            <LogOut size={16} color="#6C63FF" />
+            <Text style={styles.logoutText}>Salir</Text>
           </TouchableOpacity>
         </View>
       </View>
 
       <View style={styles.balanceCard}>
+        <Wallet size={20} color="#ffffffaa" style={{ marginBottom: 6 }} />
         <Text style={styles.balanceLabel}>Saldo disponible</Text>
         <Text style={styles.balanceAmount}>${balance.toLocaleString()}</Text>
         <Text style={styles.balanceSub}>USD • Cuenta Principal</Text>
       </View>
 
-      <TouchableOpacity
-        style={styles.statsRow}
-        onPress={() => router.push('/stats')}
-        activeOpacity={0.8}
-      >
+      <TouchableOpacity style={styles.statsRow} onPress={() => router.push('/stats')} activeOpacity={0.8}>
         <View style={styles.statBox}>
-          <Text style={styles.statIcon}>📦</Text>
+          <Package size={20} color="#6C63FF" style={{ marginBottom: 6 }} />
           <Text style={styles.statLabel}>Compras</Text>
           <Text style={styles.statValue}>{stats.compras}</Text>
         </View>
         <View style={styles.statBox}>
-          <Text style={styles.statIcon}>💸</Text>
+          <DollarSign size={20} color="#6C63FF" style={{ marginBottom: 6 }} />
           <Text style={styles.statLabel}>Gastado</Text>
           <Text style={styles.statValue}>${stats.gastado.toLocaleString()}</Text>
         </View>
         <View style={styles.statBox}>
-          <Text style={styles.statIcon}>✅</Text>
+          <CheckCircle size={20} color="#4ade80" style={{ marginBottom: 6 }} />
           <Text style={styles.statLabel}>Éxitos</Text>
           <Text style={styles.statValue}>{stats.exitos}</Text>
         </View>
         <View style={styles.statBox}>
-          <Text style={styles.statIcon}>❌</Text>
+          <XCircle size={20} color="#f87171" style={{ marginBottom: 6 }} />
           <Text style={styles.statLabel}>Fracasos</Text>
           <Text style={styles.statValue}>{stats.fracasos}</Text>
         </View>
@@ -85,7 +84,7 @@ export default function HomeScreen() {
           style={styles.scanCard}
           onPress={() => router.push({ pathname: '/(checkout)/scanner', params: { mode: 'qr' } })}
         >
-          <Text style={styles.scanCardIcon}>📷</Text>
+          <QrCode size={36} color="#fff" style={{ marginBottom: 10 }} />
           <Text style={styles.scanCardTitle}>Código QR</Text>
           <Text style={styles.scanCardSub}>Pagos y links</Text>
         </TouchableOpacity>
@@ -94,21 +93,20 @@ export default function HomeScreen() {
           style={[styles.scanCard, styles.scanCardAlt]}
           onPress={() => router.push({ pathname: '/(checkout)/scanner', params: { mode: 'barcode' } })}
         >
-          <Text style={styles.scanCardIcon}>📦</Text>
+          <Barcode size={36} color="#6C63FF" style={{ marginBottom: 10 }} />
           <Text style={styles.scanCardTitle}>Código de Barras</Text>
           <Text style={styles.scanCardSub}>Productos retail</Text>
         </TouchableOpacity>
       </View>
 
-      <TouchableOpacity
-        style={styles.mapBtn}
-        onPress={() => router.push('/map')}
-      >
-        <Text style={styles.mapBtnText}>🗺️ Ver mi ubicación</Text>
+      <TouchableOpacity style={styles.mapBtn} onPress={() => router.push('/map')}>
+        <MapPin size={18} color="#6C63FF" />
+        <Text style={styles.mapBtnText}>Ver mi ubicación</Text>
       </TouchableOpacity>
 
       <View style={styles.footer}>
-        <Text style={styles.footerText}>🔒 Tus pagos están protegidos</Text>
+        <Lock size={12} color="#333" />
+        <Text style={styles.footerText}>  Tus pagos están protegidos</Text>
       </View>
     </View>
   );
@@ -120,7 +118,7 @@ const styles = StyleSheet.create({
   headerRow:     { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   greeting:      { color: '#888', fontSize: 15 },
   name:          { color: '#fff', fontSize: 20, fontWeight: 'bold' },
-  logoutBtn:     { backgroundColor: '#1e1e1e', paddingHorizontal: 14, paddingVertical: 8, borderRadius: 10 },
+  logoutBtn:     { backgroundColor: '#1e1e1e', paddingHorizontal: 14, paddingVertical: 8, borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 6 },
   logoutText:    { color: '#6C63FF', fontWeight: 'bold', fontSize: 13 },
   balanceCard: {
     backgroundColor: '#6C63FF', borderRadius: 20, padding: 24, marginBottom: 24,
@@ -132,11 +130,7 @@ const styles = StyleSheet.create({
   balanceSub:    { color: '#ffffffaa', fontSize: 12, marginTop: 6 },
   statsRow:      { flexDirection: 'row', gap: 8, marginBottom: 4 },
   statsHint:     { color: '#555', fontSize: 11, textAlign: 'right', marginBottom: 20 },
-  statBox: {
-    flex: 1, backgroundColor: '#1e1e1e',
-    borderRadius: 14, padding: 12, alignItems: 'center',
-  },
-  statIcon:      { fontSize: 20, marginBottom: 6 },
+  statBox:       { flex: 1, backgroundColor: '#1e1e1e', borderRadius: 14, padding: 12, alignItems: 'center' },
   statLabel:     { color: '#888', fontSize: 10, marginBottom: 4 },
   statValue:     { color: '#fff', fontSize: 14, fontWeight: 'bold' },
   sectionTitle:  { color: '#fff', fontSize: 18, fontWeight: 'bold', marginBottom: 16 },
@@ -148,15 +142,10 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.35, shadowRadius: 12, elevation: 8,
   },
   scanCardAlt:   { backgroundColor: '#1e1e1e', borderWidth: 1, borderColor: '#6C63FF', shadowColor: '#000' },
-  scanCardIcon:  { fontSize: 36, marginBottom: 10 },
   scanCardTitle: { color: '#fff', fontSize: 15, fontWeight: 'bold', textAlign: 'center' },
   scanCardSub:   { color: '#ffffffaa', fontSize: 11, marginTop: 4, textAlign: 'center' },
-  mapBtn: {
-    backgroundColor: '#1e1e1e', borderRadius: 14, padding: 16,
-    alignItems: 'center', marginTop: 4,
-    borderWidth: 1, borderColor: '#6C63FF',
-  },
+  mapBtn:        { backgroundColor: '#1e1e1e', borderRadius: 14, padding: 16, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginTop: 4, borderWidth: 1, borderColor: '#6C63FF', gap: 8 },
   mapBtnText:    { color: '#6C63FF', fontSize: 15, fontWeight: 'bold' },
-  footer:        { alignItems: 'center', marginTop: 20 },
+  footer:        { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginTop: 20 },
   footerText:    { color: '#333', fontSize: 12 },
 });
