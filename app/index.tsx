@@ -33,7 +33,6 @@ export default function HomeScreen() {
     <View style={styles.container}>
       <StatusBar barStyle="light-content" />
 
-      {/* Header con logout */}
       <View style={styles.header}>
         <View style={styles.headerRow}>
           <View>
@@ -46,14 +45,12 @@ export default function HomeScreen() {
         </View>
       </View>
 
-      {/* Balance */}
       <View style={styles.balanceCard}>
         <Text style={styles.balanceLabel}>Saldo disponible</Text>
         <Text style={styles.balanceAmount}>${balance.toLocaleString()}</Text>
         <Text style={styles.balanceSub}>USD • Cuenta Principal</Text>
       </View>
 
-      {/* Stats tocables → /stats */}
       <TouchableOpacity
         style={styles.statsRow}
         onPress={() => router.push('/stats')}
@@ -82,7 +79,6 @@ export default function HomeScreen() {
       </TouchableOpacity>
       <Text style={styles.statsHint}>Toca para ver detalles →</Text>
 
-      {/* Botones de escaneo */}
       <Text style={styles.sectionTitle}>¿Qué querés escanear?</Text>
       <View style={styles.scanRow}>
         <TouchableOpacity
@@ -103,6 +99,13 @@ export default function HomeScreen() {
           <Text style={styles.scanCardSub}>Productos retail</Text>
         </TouchableOpacity>
       </View>
+
+      <TouchableOpacity
+        style={styles.mapBtn}
+        onPress={() => router.push('/map')}
+      >
+        <Text style={styles.mapBtnText}>🗺️ Ver mi ubicación</Text>
+      </TouchableOpacity>
 
       <View style={styles.footer}>
         <Text style={styles.footerText}>🔒 Tus pagos están protegidos</Text>
@@ -137,7 +140,7 @@ const styles = StyleSheet.create({
   statLabel:     { color: '#888', fontSize: 10, marginBottom: 4 },
   statValue:     { color: '#fff', fontSize: 14, fontWeight: 'bold' },
   sectionTitle:  { color: '#fff', fontSize: 18, fontWeight: 'bold', marginBottom: 16 },
-  scanRow:       { flexDirection: 'row', gap: 12 },
+  scanRow:       { flexDirection: 'row', gap: 12, marginBottom: 12 },
   scanCard: {
     flex: 1, backgroundColor: '#6C63FF', borderRadius: 20,
     padding: 24, alignItems: 'center', justifyContent: 'center',
@@ -148,6 +151,12 @@ const styles = StyleSheet.create({
   scanCardIcon:  { fontSize: 36, marginBottom: 10 },
   scanCardTitle: { color: '#fff', fontSize: 15, fontWeight: 'bold', textAlign: 'center' },
   scanCardSub:   { color: '#ffffffaa', fontSize: 11, marginTop: 4, textAlign: 'center' },
-  footer:        { alignItems: 'center', marginTop: 24 },
+  mapBtn: {
+    backgroundColor: '#1e1e1e', borderRadius: 14, padding: 16,
+    alignItems: 'center', marginTop: 4,
+    borderWidth: 1, borderColor: '#6C63FF',
+  },
+  mapBtnText:    { color: '#6C63FF', fontSize: 15, fontWeight: 'bold' },
+  footer:        { alignItems: 'center', marginTop: 20 },
   footerText:    { color: '#333', fontSize: 12 },
 });

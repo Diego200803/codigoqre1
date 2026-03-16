@@ -5,6 +5,7 @@ import {
 } from 'react-native';
 import { router } from 'expo-router';
 import { supabase } from '../../lib/core/supabase/client';
+import { notify } from '../../lib/core/notifications/notificationService';
 
 export default function LoginScreen() {
   const [email, setEmail] = useState('');
@@ -17,25 +18,26 @@ export default function LoginScreen() {
       return;
     }
     setLoading(true);
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    setLoading(false);
-    if (error) {
-      Alert.alert('Error', error.message);
-    } else {
+    try {
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) throw error;
+      await notify.loginSuccess();
       router.replace('/');
+    } catch (e: any) {
+      Alert.alert('Error', e.message);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <View style={styles.container}>
       <StatusBar barStyle="light-content" />
-
       <View style={styles.header}>
         <Text style={styles.icon}>📷</Text>
         <Text style={styles.title}>QR Checkout</Text>
         <Text style={styles.subtitle}>Iniciá sesión para continuar</Text>
       </View>
-
       <View style={styles.form}>
         <Text style={styles.label}>Email</Text>
         <TextInput
@@ -47,7 +49,6 @@ export default function LoginScreen() {
           keyboardType="email-address"
           autoCapitalize="none"
         />
-
         <Text style={styles.label}>Contraseña</Text>
         <TextInput
           style={styles.input}
@@ -57,7 +58,6 @@ export default function LoginScreen() {
           onChangeText={setPassword}
           secureTextEntry
         />
-
         <TouchableOpacity
           style={[styles.button, loading && styles.buttonDisabled]}
           onPress={handleLogin}
@@ -68,7 +68,6 @@ export default function LoginScreen() {
             : <Text style={styles.buttonText}>Iniciar Sesión</Text>
           }
         </TouchableOpacity>
-
         <TouchableOpacity
           style={styles.link}
           onPress={() => router.push('/(auth)/register')}
@@ -93,10 +92,7 @@ const styles = StyleSheet.create({
     padding: 16, fontSize: 15, borderWidth: 1, borderColor: '#2e2e2e',
     marginBottom: 8,
   },
-  button: {
-    backgroundColor: '#6C63FF', borderRadius: 14,
-    padding: 18, alignItems: 'center', marginTop: 8,
-  },
+  button: { backgroundColor: '#6C63FF', borderRadius: 14, padding: 18, alignItems: 'center', marginTop: 8 },
   buttonDisabled: { opacity: 0.6 },
   buttonText: { color: '#fff', fontSize: 17, fontWeight: 'bold' },
   link: { alignItems: 'center', marginTop: 16 },

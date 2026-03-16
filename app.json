@@ -23,8 +23,15 @@
       "predictiveBackGestureEnabled": false,
       "permissions": [
         "android.permission.CAMERA",
-        "android.permission.RECORD_AUDIO"
-      ]
+        "android.permission.RECORD_AUDIO",
+        "android.permission.ACCESS_FINE_LOCATION",
+        "android.permission.ACCESS_COARSE_LOCATION"
+      ],
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyDw4uG1MaQ0led-YoN2LY324T1EKEb4j9s"
+        }
+      }
     },
     "web": {
       "output": "static",
@@ -50,6 +57,19 @@
           "recordAudioPermission": false,
           "cameraPermission": "Permite que la app use la cámara para escanear códigos."
         }
+      ],
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Permite que la app acceda a tu ubicación para mostrarte en el mapa."
+        }
+      ],
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/images/icon.png",
+          "color": "#6C63FF"
+        }
       ]
     ],
     "experiments": {
@@ -59,9 +79,9 @@
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "84a4334a-fc88-4442-9c6b-b8fdcb06ef90"
+        "projectId": "569a0a0d-e2cc-4a72-8911-4825a76af7a6"
       }
     },
-    "owner": "paulmj12"
+    "owner": "diegofernando20083"
   }
 }
