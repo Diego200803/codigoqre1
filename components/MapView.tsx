@@ -1,5 +1,6 @@
 import React from 'react';
 import { StyleSheet, View, Dimensions, Platform, Text } from 'react-native';
+import { Map } from 'lucide-react-native';
 
 type Props = {
   latitude: number;
@@ -10,7 +11,8 @@ export default function MapComponent({ latitude, longitude }: Props) {
   if (Platform.OS === 'web') {
     return (
       <View style={styles.webFallback}>
-        <Text style={styles.webText}>🗺️ El mapa solo está disponible en la app móvil</Text>
+        <Map size={32} color="#555" style={{ marginBottom: 10 }} />
+        <Text style={styles.webText}>El mapa solo esta disponible en la app movil</Text>
       </View>
     );
   }
@@ -34,8 +36,8 @@ export default function MapComponent({ latitude, longitude }: Props) {
       >
         <Marker
           coordinate={{ latitude, longitude }}
-          title="Estás aquí"
-          description="Tu ubicación actual"
+          title="Estas aqui"
+          description="Tu ubicacion actual"
           pinColor="#6C63FF"
         />
       </MapView>

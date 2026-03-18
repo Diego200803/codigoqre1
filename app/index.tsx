@@ -1,22 +1,23 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, StatusBar } from 'react-native';
 import { router } from 'expo-router';
-import { LogOut, Package, DollarSign, CheckCircle, XCircle, QrCode, Barcode, MapPin, Lock, Wallet } from 'lucide-react-native';
-import { useBalance } from '../lib/modules/BalanceContext';
-import { getStats } from '../lib/core/supabase/transactionService';
-import { supabase } from '../lib/core/supabase/client';
-
 import {
+  LogOut,
   Package,
   DollarSign,
   CheckCircle,
   XCircle,
-  Camera,
-  ScanBarcode,
-  LogOut,
-  Shield,
-  Hand
-} from "lucide-react-native";
+  QrCode,
+  Barcode,
+  MapPin,
+  Lock,
+  Wallet,
+  Hand,
+  ChevronRight,
+} from 'lucide-react-native';
+import { useBalance } from '../lib/modules/BalanceContext';
+import { getStats } from '../lib/core/supabase/transactionService';
+import { supabase } from '../lib/core/supabase/client';
 
 export default function HomeScreen() {
 
@@ -48,11 +49,10 @@ export default function HomeScreen() {
       <StatusBar barStyle="light-content" />
 
       <View style={styles.header}>
-
         <View style={styles.headerRow}>
 
           <View style={styles.greetingRow}>
-            <Hand size={18} color="#888"/>
+            <Hand size={18} color="#888" />
             <Text style={styles.greeting}>Bienvenido</Text>
           </View>
 
@@ -67,9 +67,7 @@ export default function HomeScreen() {
           </TouchableOpacity>
 
         </View>
-
       </View>
-
 
       <View style={styles.balanceCard}>
         <Wallet size={20} color="#ffffffaa" style={{ marginBottom: 6 }} />
@@ -93,7 +91,7 @@ export default function HomeScreen() {
 
         <View style={styles.statBox}>
           <CheckCircle size={20} color="#4ade80" style={{ marginBottom: 6 }} />
-          <Text style={styles.statLabel}>Éxitos</Text>
+          <Text style={styles.statLabel}>Exitos</Text>
           <Text style={styles.statValue}>{stats.exitos}</Text>
         </View>
 
@@ -102,12 +100,14 @@ export default function HomeScreen() {
           <Text style={styles.statLabel}>Fracasos</Text>
           <Text style={styles.statValue}>{stats.fracasos}</Text>
         </View>
-
       </TouchableOpacity>
 
-      <Text style={styles.statsHint}>Toca para ver detalles →</Text>
+      <View style={styles.statsHintRow}>
+        <ChevronRight size={13} color="#555" />
+        <Text style={styles.statsHint}>Toca para ver detalles</Text>
+      </View>
 
-      <Text style={styles.sectionTitle}>¿Qué querés escanear?</Text>
+      <Text style={styles.sectionTitle}>Que queres escanear?</Text>
 
       <View style={styles.scanRow}>
 
@@ -116,9 +116,8 @@ export default function HomeScreen() {
           onPress={() => router.push({ pathname: '/(checkout)/scanner', params: { mode: 'qr' } })}
         >
           <QrCode size={36} color="#fff" style={{ marginBottom: 10 }} />
-          <Text style={styles.scanCardTitle}>Código QR</Text>
+          <Text style={styles.scanCardTitle}>Codigo QR</Text>
           <Text style={styles.scanCardSub}>Pagos y links</Text>
-
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -126,32 +125,31 @@ export default function HomeScreen() {
           onPress={() => router.push({ pathname: '/(checkout)/scanner', params: { mode: 'barcode' } })}
         >
           <Barcode size={36} color="#6C63FF" style={{ marginBottom: 10 }} />
-          <Text style={styles.scanCardTitle}>Código de Barras</Text>
+          <Text style={styles.scanCardTitle}>Codigo de Barras</Text>
           <Text style={styles.scanCardSub}>Productos retail</Text>
-
         </TouchableOpacity>
 
       </View>
 
       <TouchableOpacity style={styles.mapBtn} onPress={() => router.push('/map')}>
         <MapPin size={18} color="#6C63FF" />
-        <Text style={styles.mapBtnText}>Ver mi ubicación</Text>
+        <Text style={styles.mapBtnText}>Ver mi ubicacion</Text>
       </TouchableOpacity>
 
       <View style={styles.footer}>
         <Lock size={12} color="#333" />
-        <Text style={styles.footerText}>  Tus pagos están protegidos</Text>
+        <Text style={styles.footerText}>  Tus pagos estan protegidos</Text>
       </View>
 
     </View>
   );
 }
 
-
 const styles = StyleSheet.create({
   container:     { flex: 1, backgroundColor: '#0f0f0f', padding: 24, paddingTop: 60 },
   header:        { marginBottom: 28 },
   headerRow:     { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  greetingRow:   { flexDirection: 'row', alignItems: 'center', gap: 6 },
   greeting:      { color: '#888', fontSize: 15 },
   name:          { color: '#fff', fontSize: 20, fontWeight: 'bold' },
   logoutBtn:     { backgroundColor: '#1e1e1e', paddingHorizontal: 14, paddingVertical: 8, borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 6 },
@@ -165,7 +163,8 @@ const styles = StyleSheet.create({
   balanceAmount: { color: '#fff', fontSize: 38, fontWeight: 'bold' },
   balanceSub:    { color: '#ffffffaa', fontSize: 12, marginTop: 6 },
   statsRow:      { flexDirection: 'row', gap: 8, marginBottom: 4 },
-  statsHint:     { color: '#555', fontSize: 11, textAlign: 'right', marginBottom: 20 },
+  statsHintRow:  { flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end', marginBottom: 20, gap: 2 },
+  statsHint:     { color: '#555', fontSize: 11 },
   statBox:       { flex: 1, backgroundColor: '#1e1e1e', borderRadius: 14, padding: 12, alignItems: 'center' },
   statLabel:     { color: '#888', fontSize: 10, marginBottom: 4 },
   statValue:     { color: '#fff', fontSize: 14, fontWeight: 'bold' },
