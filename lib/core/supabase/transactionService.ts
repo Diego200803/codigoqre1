@@ -22,7 +22,7 @@ export async function saveTransaction(transaction: Transaction): Promise<void> {
   });
 
   if (error) {
-    console.error('❌ Error guardando transacción:', error.message);
+    console.error('[ERROR] Guardando transaccion:', error.message);
     throw error;
   }
 }
@@ -45,7 +45,7 @@ export async function getStats() {
   };
 }
 
-// ✅ NUEVO: últimas 10 transacciones para el historial
+// Ultimas 10 transacciones para el historial
 export async function getRecentTransactions() {
   const { data, error } = await supabase
     .from('transactions')

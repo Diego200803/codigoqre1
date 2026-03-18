@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { CameraView, useCameraPermissions, BarcodeType } from 'expo-camera';
 import * as Haptics from 'expo-haptics';
+import { ScanLine, Camera } from 'lucide-react-native';
 import { notify } from '../../lib/core/notifications/notificationService';
 
 type Props = {
@@ -21,7 +22,8 @@ export default function CameraScanner({ onDataDetected, mode = 'qr' }: Props) {
   if (!permission.granted) {
     return (
       <View style={styles.center}>
-        <Text style={styles.text}>Necesitamos acceso a tu cámara</Text>
+        <Camera size={48} color="#6C63FF" style={{ marginBottom: 16 }} />
+        <Text style={styles.text}>Necesitamos acceso a tu camara</Text>
         <TouchableOpacity style={styles.button} onPress={requestPermission}>
           <Text style={styles.buttonText}>Dar permiso</Text>
         </TouchableOpacity>
@@ -55,7 +57,8 @@ export default function CameraScanner({ onDataDetected, mode = 'qr' }: Props) {
       </View>
       {scanned && (
         <View style={styles.scanning}>
-          <Text style={styles.scanningText}>✅ Escaneando...</Text>
+          <ScanLine size={18} color="#4ade80" style={{ marginRight: 8 }} />
+          <Text style={styles.scanningText}>Escaneando...</Text>
         </View>
       )}
     </View>
@@ -70,10 +73,14 @@ const styles = StyleSheet.create({
   buttonText: { color: '#fff', fontWeight: 'bold' },
   overlay: { ...StyleSheet.absoluteFillObject, justifyContent: 'center', alignItems: 'center' },
   corner: { position: 'absolute', width: 40, height: 40, borderColor: '#6C63FF', borderWidth: 4 },
-  topLeft: { top: '30%', left: '15%', borderRightWidth: 0, borderBottomWidth: 0 },
-  topRight: { top: '30%', right: '15%', borderLeftWidth: 0, borderBottomWidth: 0 },
-  bottomLeft: { bottom: '30%', left: '15%', borderRightWidth: 0, borderTopWidth: 0 },
-  bottomRight: { bottom: '30%', right: '15%', borderLeftWidth: 0, borderTopWidth: 0 },
-  scanning: { position: 'absolute', bottom: 60, alignSelf: 'center', backgroundColor: '#000000cc', padding: 16, borderRadius: 12 },
+  topLeft:    { top: '30%',    left: '15%',  borderRightWidth: 0,  borderBottomWidth: 0 },
+  topRight:   { top: '30%',    right: '15%', borderLeftWidth: 0,   borderBottomWidth: 0 },
+  bottomLeft: { bottom: '30%', left: '15%',  borderRightWidth: 0,  borderTopWidth: 0 },
+  bottomRight:{ bottom: '30%', right: '15%', borderLeftWidth: 0,   borderTopWidth: 0 },
+  scanning: {
+    position: 'absolute', bottom: 60, alignSelf: 'center',
+    backgroundColor: '#000000cc', padding: 16, borderRadius: 12,
+    flexDirection: 'row', alignItems: 'center',
+  },
   scanningText: { color: '#fff', fontWeight: 'bold', fontSize: 16 },
 });

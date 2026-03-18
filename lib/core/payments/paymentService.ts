@@ -12,9 +12,9 @@ export type PaymentResult = {
 // ── Catálogo mock de productos ────────────────────────────────────────────────
 
 const PRODUCTS: Record<string, { name: string; price: number }> = {
-  'product://001': { name: 'Auriculares Pro',   price: 299 },
-  'product://002': { name: 'Teclado Mecánico',  price: 189 },
-  'product://003': { name: 'Mouse Gamer',        price: 99  },
+  'product://001': { name: 'Auriculares Pro',  price: 299 },
+  'product://002': { name: 'Teclado Mecanico', price: 189 },
+  'product://003': { name: 'Mouse Gamer',      price: 99  },
 };
 
 export function getProductInfo(code: string): { name: string; price: number } {
@@ -30,7 +30,7 @@ export function getProductInfo(code: string): { name: string; price: number } {
 export async function mockPayment(
   productId: string,
   amount: number,
-  userId?: string          // opcional: si el usuario está logueado
+  userId?: string
 ): Promise<PaymentResult> {
 
   // 1. Simula delay de red / pasarela de pago
@@ -40,8 +40,8 @@ export async function mockPayment(
   const success       = Math.random() > 0.2;
   const transactionId = success ? `TXN-${Date.now()}` : '';
   const message       = success
-    ? '¡Pago aprobado!'
-    : 'Pago rechazado. Intentá de nuevo.';
+    ? 'Pago aprobado!'
+    : 'Pago rechazado. Intenta de nuevo.';
 
   // 3. Guardar en Supabase
   const productInfo = getProductInfo(productId);
@@ -58,9 +58,9 @@ export async function mockPayment(
   });
 
   if (error) {
-    console.error('❌ Error guardando transacción en Supabase:', error.message);
+    console.error('[ERROR] Guardando transaccion en Supabase:', error.message);
   }
 
-  // 4. Retorna el resultado hacia la UI (sin cambios para el resto de la app)
+  // 4. Retorna el resultado hacia la UI
   return { success, transactionId, message, amount };
 }

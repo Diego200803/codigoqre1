@@ -35,20 +35,20 @@ export async function sendLocalNotification(title: string, body: string) {
 // Notificaciones específicas
 export const notify = {
   loginSuccess: () =>
-    sendLocalNotification('¡Bienvenido! 👋', 'Inicio de sesión exitoso.'),
+    sendLocalNotification('Bienvenido', 'Inicio de sesion exitoso.'),
 
   locationDetected: () =>
-    sendLocalNotification('📍 Ubicación detectada', '¡Ubicación detectada exitosamente!'),
+    sendLocalNotification('Ubicacion detectada', 'Tu ubicacion fue obtenida exitosamente.'),
 
   mapOpened: () =>
-    sendLocalNotification('🗺️ Mapa abierto', 'Cargando tu ubicación en el mapa...'),
+    sendLocalNotification('Mapa abierto', 'Cargando tu ubicacion en el mapa...'),
 
   paymentSuccess: (amount: number) =>
-    sendLocalNotification('✅ Pago realizado', `¡Pago de $${amount} realizado exitosamente!`),
+    sendLocalNotification('Pago aprobado', `Pago de $${amount} realizado exitosamente.`),
 
   paymentFailed: () =>
-    sendLocalNotification('❌ Pago rechazado', 'Tu pago fue rechazado. Intentá de nuevo.'),
+    sendLocalNotification('Pago rechazado', 'Tu pago fue rechazado. Intenta de nuevo.'),
 
   qrScanned: () =>
-    sendLocalNotification('📷 Código detectado', '¡Código escaneado! Procesando pago...'),
+    sendLocalNotification('Codigo detectado', 'Codigo escaneado. Procesando pago...'),
 };
